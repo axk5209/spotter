@@ -5,3 +5,24 @@ html, body {
   canvas {
 	display: block;
   }
+  
+  #p5sketch {
+	  background: pink;
+	  box-sizing: border-box;
+	  -moz-box-sizing: border-box;
+	  -webkit-box-sizing: border-box;
+	  display: inline-block;
+	  float: left;
+	  padding: 25px;
+	  width: 50%;
+  }
+  #p5sketch2 {
+	  background: blue;
+	  box-sizing: border-box;
+	  -moz-box-sizing: border-box;
+	  -webkit-box-sizing: border-box;
+	  display: inline-block;
+	  float: left;
+	  padding: 25px;
+	  width: 50%;
+  }
