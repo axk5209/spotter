@@ -7,22 +7,20 @@ const posesCollector = (filename) => {
   return (sketch) => {
     const index = filename === "PoseNetTest1A.mp4" ? 0 : 1
     var video;
-    var videofile = filename
+    var videofile = 'PoseNetTest1B.mp4'
     let poseNet;
     let playing = false
 
     sketch.setup = () => {
       sketch.noCanvas()
       video = sketch.createVideo(videofile, sketch.onLoad);
-
-      //Posenet
-      poseNet = ml5.poseNet(video, sketch.modelReady);
+      poseNet = ml5.poseNet();
       poseNet.on('pose', sketch.savePoses);
       video.hide();
     }
 
     sketch.onLoad = () => {
-      video.size(100, 100);
+      video.size(1000, 1000);
       video.volume(0)
       video.onended(function() {
         playing = false
@@ -39,12 +37,10 @@ const posesCollector = (filename) => {
         playing = true
       })
       video.speed(0.5)
+      video.loadPixels()
       video.play()
     }
 
-    sketch.modelReady = () => {
-      poseNet.singlePose()
-    }
 
     //Pose Net 
     sketch.savePoses = (poses) => {
@@ -55,6 +51,17 @@ const posesCollector = (filename) => {
             .map(item => item.position)
         })
       }
+    }
+    
+    sketch.draw = () => {
+      //console.log(video.time())
+      if (playing)
+      {
+        const image64 = video.canvas.toDataURL()
+        const img = sketch.createImg(image64, "image")
+        poseNet.singlePose(img) 
+      }
+      
     }
 
   }
@@ -127,3 +134,4 @@ if (complete)
     document.getElementById('p5sketch2')
   );
 }
+
