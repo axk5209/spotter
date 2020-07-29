@@ -7,20 +7,20 @@ const posesCollector = (filename) => {
   return (sketch) => {
     const index = filename === "PoseNetTest1A.mp4" ? 0 : 1
     var video;
-    var videofile = 'PoseNetTest1B.mp4'
+    var videofile = filename
     let poseNet;
     let playing = false
 
     sketch.setup = () => {
       sketch.noCanvas()
       video = sketch.createVideo(videofile, sketch.onLoad);
-      poseNet = ml5.poseNet();
+      poseNet = ml5.poseNet(video, sketch.modelCreated);
       poseNet.on('pose', sketch.savePoses);
       video.hide();
     }
 
     sketch.onLoad = () => {
-      video.size(1000, 1000);
+      video.size(400, 400);
       video.volume(0)
       video.onended(function() {
         playing = false
@@ -28,6 +28,20 @@ const posesCollector = (filename) => {
         {
           complete = true
           console.log(posesCollection)
+          let vector1 = posesCollection[0][0].poses.map(item => [item.x, item.y]).flatten()
+          let vector2 = posesCollection[1][0].poses.map(item => [item.x, item.y]).flatten()
+            console.log(vector1)
+            console.log(vector2)
+          
+//           let myp5Complete = new p5(
+//           sketchCreator('PoseNetTest1A.mp4'), 
+//           document.getElementById('p5sketch')
+//           );
+
+//           let myp5Complete2 = new p5( 
+//             sketchCreator('PoseNetTest1B.mp4'),
+//             document.getElementById('p5sketch2')
+//           );
         }
       })
       video.addCue(0.0, function() {
@@ -36,34 +50,27 @@ const posesCollector = (filename) => {
       video.addCue(0.01, function() {
         playing = true
       })
-      video.speed(0.5)
-      video.loadPixels()
+      video.speed(0.2)
       video.play()
     }
 
-
+    sketch.modelCreated = () => {
+      poseNet.singlePose()
+    }
     //Pose Net 
     sketch.savePoses = (poses) => {
       if (playing) {
+        //console.log(poses)
         posesCollection[index].push({
           time: video.time(),
           poses: poses[0].pose.keypoints
-            .map(item => item.position)
+            .map(item => ({
+              score: item.score, 
+              x: item.position.x, 
+              y: item.position.y}))
         })
       }
     }
-    
-    sketch.draw = () => {
-      //console.log(video.time())
-      if (playing)
-      {
-        const image64 = video.canvas.toDataURL()
-        const img = sketch.createImg(image64, "image")
-        poseNet.singlePose(img) 
-      }
-      
-    }
-
   }
 }
 
@@ -81,7 +88,7 @@ const sketchCreator = (filename) => {
     var video;
     var videofile = filename;
     let poseNet;
-    let poses = [];
+    let keypoints = [];
     let skeletons = [];
     const index = filename === "PoseNetTest1A.mp4" ? 0 : 1
 
@@ -98,40 +105,32 @@ const sketchCreator = (filename) => {
       video.play()
       video.addCue(0.0, function() {})
       posesCollection[index].forEach(pose => {
-        video.addCue(pose.time, function() {sketch.drawKeypoints(pose.poses)})
+        video.addCue(pose.time, function() {
+          keypoints = pose.poses
+        })
       })
     }
 
 
     sketch.draw = () => {
       sketch.image(video, 0, 0, sketch.width, sketch.height);
+      //console.log(video.time())
+      //console.log(keypoints)
+      sketch.drawKeypoints()
     }
 
-    sketch.drawKeypoints = (keypoints) => {
-
+    sketch.drawKeypoints = () => {
       for (let j = 0; j < keypoints.length; j++) {        
         let keypoint = keypoints[j];
-        sketch.fill(255, 0, 0);
-        sketch.noStroke();
-        sketch.ellipse(keypoint.position.x, keypoint.position.y, 10, 10);
+        if (keypoint.score > 0.1)
+        {
+          sketch.fill(255, 0, 0);
+          sketch.noStroke();
+          sketch.ellipse(keypoint.x, keypoint.y, 10, 10);
+        }
       }
     }
   }
 }
 
-let myp5Complete
-let myp5Complete2
-if (complete)
-{
-  console.log("company entered")
-  myp5Complete = new p5(
-  sketchCreator('PoseNetTest1A.mp4'), 
-  document.getElementById('p5sketch')
-  );
-  
-  myp5Complete2 = new p5( 
-    sketchCreator('PoseNetTest1B.mp4'),
-    document.getElementById('p5sketch2')
-  );
-}
 
