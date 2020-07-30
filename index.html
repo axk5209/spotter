@@ -18,8 +18,44 @@
 </head>
 
 <body>
-	<div id = "p5sketch"></div>
-	<div id = "p5sketch2"></div>
+	<div id="header">
+		<h1>Welcome To Spotter!</h1> 
+		<p>Enter some videos to compare</p>
+	</div>
+	<div id="container">
+		<div id="first">
+			<h1 style = "color:#0e8f8a">Select Video 1</h1>
+			<br>
+			<input type="file" id="video1" name="video1" accept="video/*">
+		</div>
+		<div id="second">
+			<h1 style = "color:#0e8f8a">Select Video 2</h1>
+			<br>
+			<input type="file" id="video2" name="video2" accept="video/*">
+		</div>
+		<div id="clear">
+			<button type="button" id = "spot" onclick="handleSpot()">Start Spotting</button>
+			
+		</div>
+		<br>
+		<br>
+		<div>
+			<button type="button" id = "spot" onclick="handleView()">View Analysis</button>
+		</div>
+	</div>
+
+	<br><br>
+	<br><br>
+	<br><br>
+	<br><br>
+	<div id="video-container">
+		<div id = "p5sketch"></div>
+		<div id = "p5sketch2"></div>
+	</div>
+	<br><br>
+	<br><br>
+	<br><br>
+	<br><br>
 </body>
 
 </html>
