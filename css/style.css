@@ -120,7 +120,15 @@ canvas {
 #spot {
 	width: 50%;
 	font-size: 150%;
-	background: #1abc9c;
-	color: white;
 	padding: 10px
+}
+
+#view {
+	width: 50%;
+	font-size: 150%;
+	padding: 10px
+}
+
+input[type="file"] {
+    display: none;
 }

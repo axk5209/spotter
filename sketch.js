@@ -7,6 +7,7 @@ const polishedCollection = [
 	[]
 ]
 let complete = false
+
 const posesCollector = (filename, index) => {
 	return (sketch) => {
 		var video;
@@ -29,7 +30,6 @@ const posesCollector = (filename, index) => {
 				playing = false
 				if (index === 1) {
 					complete = true
-					console.log(posesCollection)
 					posesCollection[0].forEach(element => {
 						element.time = Math.round(element.time * 4) / 4
 					})
@@ -100,6 +100,11 @@ const posesCollector = (filename, index) => {
 					polishedCollection[0].push({time: end+0.25, skeleton: [], poses: []})
 					polishedCollection[1].push({time: end+0.25, skeleton: [], poses: []})
 					console.log(polishedCollection)
+					document.getElementById("message").style.display = "none"
+					const viewButton = document.getElementById("view")
+					viewButton.style.background = "#1abc9c";
+					viewButton.style.color = "white";
+					viewButton.disabled = false
 				}
 			})
 			video.addCue(0.0, function () {
@@ -108,7 +113,7 @@ const posesCollector = (filename, index) => {
 			video.addCue(0.01, function () {
 				playing = true
 			})
-			video.speed(0.25)
+			video.speed(0.5)
 			video.play()
 		}
 
@@ -170,8 +175,12 @@ const posesCollector = (filename, index) => {
 	}
 }
 function handleSpot() {
-	console.log("spot handled")
-	const video1 = document.getElementById("video1").files[0]
+	document.getElementById("message").style.display = "block"
+	const spotButton = document.getElementById("spot")
+	spotButton.style.background = "white";
+	spotButton.style.color = "gray";
+	spotButton.disabled = true
+	const video1 = document.getElementById("file-1").files[0]
 	const reader1 = new FileReader()
 	reader1.readAsDataURL(video1)
 	reader1.onloadend = () => {
@@ -180,7 +189,7 @@ function handleSpot() {
 		);
 	}
 
-	const video2 = document.getElementById("video2").files[0]
+	const video2 = document.getElementById("file-2").files[0]
 	const reader2 = new FileReader()
 	reader2.readAsDataURL(video2)
 	reader2.onloadend = () => {
@@ -192,8 +201,12 @@ function handleSpot() {
 
 function handleView() {
 	document.getElementById('video-container').style.display = "flex"
-	console.log("spot handled")
-	const video1 = document.getElementById("video1").files[0]
+	document.getElementById("message").style.display = "none"
+	const viewButton = document.getElementById("view")
+	viewButton.style.background = "white";
+	viewButton.style.color = "gray";
+	viewButton.disabled = true
+	const video1 = document.getElementById("file-1").files[0]
 	const reader1 = new FileReader()
 	reader1.readAsDataURL(video1)
 	reader1.onloadend = () => {
@@ -203,7 +216,7 @@ function handleView() {
 		);
 	}
 
-	const video2 = document.getElementById("video2").files[0]
+	const video2 = document.getElementById("file-2").files[0]
 	const reader2 = new FileReader()
 	reader2.readAsDataURL(video2)
 	reader2.onloadend = () => {
@@ -277,5 +290,21 @@ const sketchCreator = (filename, index) => {
 				sketch.line(partA.x, partA.y, partB.x, partB.y);
 			}
 		}
+	}
+}
+
+// const spotButton = document.getElementById("spot")
+// const viewButton = document.getElementById("button")
+
+// spotButton.disabled = true
+// viewButton.disabled = true
+function onInputChange()
+{
+	if (document.getElementById("file-1").value && document.getElementById("file-2").value)
+	{
+		const spotButton = document.getElementById("spot")
+		spotButton.style.background = "#1abc9c";
+		spotButton.style.color = "white";
+		spotButton.disabled = false
 	}
 }
