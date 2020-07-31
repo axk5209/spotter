@@ -22,11 +22,10 @@ canvas {
 }
 #header {
 	overflow: hidden;
-  	padding: 20px 10px;
 	text-align: center;
 	background: #1abc9c;
 	color: white;
-	font-size: 20px;
+	font-size: 40px;
   }
 
 /* Options in index.html */
@@ -119,8 +118,8 @@ canvas {
 }
 
 #spot {
-	width: 40%;
-	font-size: 200%;
+	width: 50%;
+	font-size: 150%;
 	background: #1abc9c;
 	color: white;
 	padding: 10px

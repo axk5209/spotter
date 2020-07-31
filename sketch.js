@@ -29,48 +29,77 @@ const posesCollector = (filename, index) => {
 				playing = false
 				if (index === 1) {
 					complete = true
+					console.log(posesCollection)
+					posesCollection[0].forEach(element => {
+						element.time = Math.round(element.time * 4) / 4
+					})
+					posesCollection[1].forEach(element => {
+						element.time = Math.round(element.time * 4) / 4
+					})
 
-					let polished1 = posesCollection[0]
-					let polished2 = posesCollection[1]
-					let minLength = posesCollection[0].length
-					if (posesCollection[0].length < posesCollection[1].length) {
-						polished2 = posesCollection[1].slice(0, posesCollection[0].length)
-					}
-					if (posesCollection[0].length > posesCollection[1].length) {
-						polished1 = posesCollection[0].slice(0, posesCollection[1].length)
-						minLength = posesCollection[1].length
-					}
-					console.log(polished1.length)
-					for (let i = 0; i < minLength; i++) {
+					let start = Math.max(posesCollection[0][0].time, posesCollection[1][0].time)
+					let end = Math.min(posesCollection[0][posesCollection[0].length-1].time,posesCollection[0][posesCollection[0].length-1].time)
+					let offset = start / 0.25 - 1
+					console.log(start)
+					console.log(end)
+					console.log(offset)
+
+					let polished1 = []
+					let polished2 = []
+					posesCollection[0].forEach(element => {
+						if (element.time <= end)
+						{
+							let index = element.time/0.25 - offset
+							polished1[index] = element
+						}
+					})
+					posesCollection[1].forEach(element => {
+						if (element.time <= end)
+						{
+							let index = element.time/0.25 - offset
+							polished2[index] = element
+						}
+					})
+
+					
+					console.log(polished1)
+					console.log(polished2)
+					for (let i = 0; i < polished1.length; i++)
+					{
+						if (!polished1[i] || !polished2[i])
+						{
+							polishedCollection[0].push({time: i*0.25, skeleton: [], poses: []})
+							polishedCollection[1].push({time: i*0.25, skeleton: [], poses: []})
+							continue
+						}
+
+
 						let vector1 = polished1[i].poses.map(item => [item.x, item.y]).flatten()
 						let vector2 = polished2[i].poses.map(item => [item.x, item.y]).flatten()
 						let distance = sketch.distance(vector1, vector2)
-
-						polishedCollection[0].push({
-							distance,
-							time: polished1[i].time,
-							poses: polished1[i].poses,
-							skeleton: polished1[i].skeleton
-						})
-						polishedCollection[1].push({
-							distance,
-							time: polished2[i].time,
-							poses: polished2[i].poses,
-							skeleton: polished2[i].skeleton
-						})
-
+						if (distance < 0.02)
+						{
+							polished1[polished1.length-1] = {time: end+0.25, skeleton: [], poses: []}
+							polished2[polished2.length-1] = {time: end+0.25, skeleton: [], poses: []}
+						}
+						else
+						{
+							polishedCollection[0].push({
+								time: polished1[i].time,
+								poses: polished1[i].poses,
+								skeleton: polished1[i].skeleton
+							})
+							polishedCollection[1].push({
+								time: polished2[i].time,
+								poses: polished2[i].poses,
+								skeleton: polished2[i].skeleton
+							})
+						}
+							
 					}
+					polishedCollection[0].push({time: end+0.25, skeleton: [], poses: []})
+					polishedCollection[1].push({time: end+0.25, skeleton: [], poses: []})
 					console.log(polishedCollection)
-					//           console.log(polished1)
-					//           console.log(polished2)
-					//           let vector1 = posesCollection[0][0].poses.map(item => [item.x, item.y]).flatten()
-					//           let vector2 = posesCollection[1][0].poses.map(item => [item.x, item.y]).flatten()
-					//             console.log(vector1)
-					//             console.log(vector2)
-
-					//           console.log(sketch.cosineSim(vector1, vector2))
-					//           console.log(sketch.distance(vector1, vector2))
-
 				}
 			})
 			video.addCue(0.0, function () {
@@ -79,7 +108,7 @@ const posesCollector = (filename, index) => {
 			video.addCue(0.01, function () {
 				playing = true
 			})
-			video.speed(0.1)
+			video.speed(0.25)
 			video.play()
 		}
 
@@ -205,19 +234,17 @@ const sketchCreator = (filename, index) => {
 		sketch.onLoad = () => {
 			video.size(400, 400);
 			video.volume(0)
-			video.speed(0.1)
+			video.speed(0.25)
 			video.play()
 			video.addCue(0.0, function () { })
+			video.onended(function () {
+				keypoints = []
+				skeleton = []
+			})
 			polishedCollection[index].forEach(pose => {
 				video.addCue(pose.time, function () {
-					if (pose.distance > 0.04) {
 						keypoints = pose.poses
 						skeleton = pose.skeleton
-					}
-					else {
-						keypoints = []
-						skeleton = []
-					}
 				})
 			})
 		}
